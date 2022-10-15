@@ -27,50 +27,89 @@ public class HashDictionary<K extends Comparable<? super K>, V> implements Dicti
     @Override
     public V insert(K key, V value) {
         int adr = searchAdr(key);
-        if (adr != -1) {
-            // key already exists
-            // TODO: alte daten ersetzen
-            //Entry<K,V> old = data[adr].
-            // return old;
-        } else {
-            data[adr].addFirst(new Entry<K, V>(key, value));
+
+        if (search(key) != null) {
+            for (var e : data[adr]) {
+                if (e.getKey().equals(key)) {
+                    V old = e.getValue();
+                    e.setValue(value);
+                    return old;
+                }
+            }
         }
+
+        if (size++ == data.length) { ensureCapacity(); }
+        if (data[adr] == null) {
+            data[adr] = new LinkedList<>();
+            data[adr].add(new Entry<K, V>(key, value));
+            size++;
+        } else {
+            data[adr].add(new Entry<K, V>(key, value));
+            size++;
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void ensureCapacity() {
+        int newload = data.length * 2;
+
+        while (!isPrime(newload)) {
+            ++newload;
+        }
+
+        HashDictionary<K, V> newdata = new HashDictionary<>(newload);
+        for (var v : data) {
+            if (v == null)
+                continue;
+            for (Entry<K, V> e : v)
+                newdata.insert(e.getKey(), e.getValue());
+        }
+
+        data = new LinkedList[newload];
+        newload = load;
+        for (var v : newdata.data) {
+            if (v == null)
+                continue;
+            for (Entry<K, V> e : v)
+                this.insert(e.getKey(), e.getValue());
+        }
+    }
+
+    private int searchAdr(K key) {
+        int adr = 0;
+        int hash = key.hashCode() > 0 ? adr : -adr;  // handle hashcode overflow
+        adr =  hash - (int) Math.floor(hash / size) * size;  // mathematical modulo
+
+        return adr;
     }
 
     @Override
     public V search(K key) {
         int adr = searchAdr(key);
-        if (adr != -1) {
-            return data[adr].value;
-        } else {
-            return null;
+        if (data[adr] != null) {
+            for (var e : data[adr]) {
+                if (e.getKey().equals(key)) {
+                    return e.getValue();
+                }
+            }
         }
-    }
-
-    private int searchAdr(K key) {
-        int adr, j = 0;
-        do {
-            int hash = (key.hashCode() > 0 ? adr : -adr);  // handle hashcode overflow
-            adr =  hash - (int) Math.floor(hash / size) * size;  // mathematical modulo
-
-        } while (data[adr] != null && data[adr].key != key);
-
-        if (/** letzter knoten != null*/) {
-            return adr;
-        } else {
-            return -1;
-        }
+        return null;
     }
 
     @Override
     public V remove(K key) {
         int adr = searchAdr(key);
-        if (adr != -1) {
-            // TODO: knoten k aus liste löschen
-            // return daten
-        } else {
-            return null;
+
+        for (var e : data[adr]) {
+            if (e.getKey().equals(key)) {
+                V old = e.getValue();
+                data[adr].remove(e);
+                size--;
+                return old;
+            }
         }
+        return null;
     }
 
     @Override
@@ -79,7 +118,33 @@ public class HashDictionary<K extends Comparable<? super K>, V> implements Dicti
     }
 
     @Override
-    public Iterator<Dictionary.Entry<K, V>> iterator() {
-        return null;
+    public Iterator<Entry<K, V>> iterator() {
+        return new HashDictionaryIterator();
+    }
+
+    private class HashDictionaryIterator implements Iterator<Entry<K, V>> {
+
+        Iterator<Entry<K, V>> it;
+        int index = -1;
+
+        @Override
+        public boolean hasNext() {
+            if (it != null && it.hasNext()) {
+                return true;
+            }
+            while (++index < data.length) {
+                if (data[index] != null) {
+                    it = data[index].iterator();
+                    return it.hasNext();
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public Entry<K, V> next() {
+            return it.next();
+        }
+
     }
 }
