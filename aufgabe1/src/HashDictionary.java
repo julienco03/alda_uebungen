@@ -43,11 +43,9 @@ public class HashDictionary<K extends Comparable<? super K>, V> implements Dicti
             data[adr] = new LinkedList<>();
             data[adr].add(new Entry<K, V>(key, value));
             size++;
-            System.out.println(size);  // debug
         } else {
             data[adr].add(new Entry<K, V>(key, value));
             size++;
-            System.out.println(size);  // debug
         }
         return null;
     }
