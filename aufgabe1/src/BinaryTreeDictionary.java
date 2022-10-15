@@ -8,11 +8,11 @@ import java.util.NoSuchElementException;
 /**
  * Implementation of the Dictionary interface as AVL tree.
  * <p>
- * The entries are ordered using their natural ordering on the keys, 
- * or by a Comparator provided at set creation time, depending on which constructor is used. 
+ * The entries are ordered using their natural ordering on the keys,
+ * or by a Comparator provided at set creation time, depending on which constructor is used.
  * <p>
  * An iterator for this dictionary is implemented by using the parent node reference.
- * 
+ *
  * @param <K> Key.
  * @param <V> Value.
  */
@@ -60,10 +60,10 @@ public class BinaryTreeDictionary<K, V> implements Dictionary<K, V> {
             parent = null;
         }
     }
-    
+
     private Node<K, V> root = null;
     private int size = 0;
-    
+
     // ...
 
 	/**

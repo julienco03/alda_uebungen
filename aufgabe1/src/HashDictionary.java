@@ -38,21 +38,24 @@ public class HashDictionary<K extends Comparable<? super K>, V> implements Dicti
             }
         }
 
-        if (size++ == data.length) { ensureCapacity(); }
+        if (size == data.length) { ensureCapacity(); }
         if (data[adr] == null) {
             data[adr] = new LinkedList<>();
             data[adr].add(new Entry<K, V>(key, value));
             size++;
+            System.out.println(size);  // debug
         } else {
             data[adr].add(new Entry<K, V>(key, value));
             size++;
+            System.out.println(size);  // debug
         }
         return null;
     }
 
     @SuppressWarnings("unchecked")
     private void ensureCapacity() {
-        int newload = data.length * 2;
+        size = 0;
+        int newload = load * 2;
 
         while (!isPrime(newload)) {
             ++newload;
@@ -60,26 +63,28 @@ public class HashDictionary<K extends Comparable<? super K>, V> implements Dicti
 
         HashDictionary<K, V> newdata = new HashDictionary<>(newload);
         for (var v : data) {
-            if (v == null)
-                continue;
-            for (Entry<K, V> e : v)
+            if (v == null) continue;
+            for (Entry<K, V> e : v) {
                 newdata.insert(e.getKey(), e.getValue());
+            }
         }
 
         data = new LinkedList[newload];
-        newload = load;
+        load = newload;
+
         for (var v : newdata.data) {
-            if (v == null)
-                continue;
-            for (Entry<K, V> e : v)
-                this.insert(e.getKey(), e.getValue());
+            if (v == null) continue;
+            for (Entry<K, V> e : v) {
+                insert(e.getKey(), e.getValue());
+            }
         }
     }
 
     private int searchAdr(K key) {
         int adr = 0;
         int hash = key.hashCode() > 0 ? adr : -adr;  // handle hashcode overflow
-        adr =  hash - (int) Math.floor(hash / size) * size;  // mathematical modulo
+        // not sure if this always works fine: adr = hash % (data.length - 1);
+        adr =  hash - (int) Math.floor(hash / data.length) * data.length;  // mathematical modulo
 
         return adr;
     }
