@@ -69,7 +69,9 @@ public class SortedArrayDictionary<K extends Comparable<? super K>, V> implement
         }
 
         V r = data[i].getValue();
-        if (size - 1 - i >= 0) System.arraycopy(data, i + 1, data, i, size - 1 - i);
+        if (size - 1 - i >= 0) {
+            System.arraycopy(data, i + 1, data, i, size - 1 - i);
+        }
         data[--size] = null;
         return r;
     }

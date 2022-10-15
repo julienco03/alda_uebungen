@@ -15,9 +15,11 @@ public class DictionaryTest {
 	 * @param args not used.
 	 */
 	public static void main(String[] args)  {
-		
+
 		testSortedArrayDictionary();
-		//testHashDictionary();
+		System.out.println("********************************************");
+		testHashDictionary();
+		System.out.println("********************************************");
 		//testBinaryTreeDictionary();
 	}
 
@@ -25,17 +27,17 @@ public class DictionaryTest {
 		Dictionary<String, String> dict = new SortedArrayDictionary<>();
 		testDict(dict);
 	}
-	
+
 	private static void testHashDictionary() {
 		//Dictionary<String, String> dict = new HashDictionary<>(3);
 		//testDict(dict);
 	}
-	
+
 	private static void testBinaryTreeDictionary() {
 		Dictionary<String, String> dict = new BinaryTreeDictionary<>();
 		testDict(dict);
-        
-        // Test für BinaryTreeDictionary mit prettyPrint 
+
+        // Test für BinaryTreeDictionary mit prettyPrint
         // (siehe Aufgabe 10; Programmiertechnik 2).
         // Pruefen Sie die Ausgabe von prettyPrint auf Papier nach.
         BinaryTreeDictionary<Integer, Integer> btd = new BinaryTreeDictionary<>();
@@ -73,12 +75,12 @@ public class DictionaryTest {
         btd.remove(45);
         System.out.println("remove:");
         btd.prettyPrint();
-		
+
 		btd.remove(50);
         System.out.println("remove:");
         btd.prettyPrint();
     }
-	
+
 	private static void testDict(Dictionary<String, String> dict) {
 		System.out.println("===== New Test Case ========================");
 		System.out.println("test " + dict.getClass());
@@ -112,5 +114,5 @@ public class DictionaryTest {
 			System.out.println(e.getKey() + ": " + e.getValue() + " search: " + dict.search(e.getKey()));
 		}
 	}
-	
+
 }

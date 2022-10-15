@@ -36,7 +36,7 @@ public interface Dictionary<K,V> extends Iterable<Dictionary.Entry<K,V>> {
      * Returns the value to which the key was previously associated,
      * or null if the key is not contained in the dictionary.
 	 * @param key key whose mapping is to be removed from the map.
-	 * @return the previous value associated with key, or null if there was no mapping for key. 
+	 * @return the previous value associated with key, or null if there was no mapping for key.
 	 */
 	V remove(K key);
 
@@ -45,16 +45,16 @@ public interface Dictionary<K,V> extends Iterable<Dictionary.Entry<K,V>> {
 	 * @return the number of elements in this dictionary.
 	 */
 	int size();
-	
+
 	/**
-	 * Returns an iterator over the entries in this dictionary. 
-	 * There are no guarantees concerning the order in which the elements are returned 
+	 * Returns an iterator over the entries in this dictionary.
+	 * There are no guarantees concerning the order in which the elements are returned
 	 * (unless this dictionary is an instance of some class that provides a guarantee).
 	 * @return an Iterator over the entries in this dictionary
 	 */
 	@Override
 	Iterator<Entry<K, V>> iterator();
-	
+
 	/**
 	 * A dictionary entry (key-value pair).
 	 * @param <K> Key (must be immutable).
