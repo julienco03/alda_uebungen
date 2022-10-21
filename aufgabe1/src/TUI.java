@@ -36,6 +36,7 @@ public class TUI {
                 break;
             case "r":
                 read(args);
+                break;
             case "p":
                 if (dic == null)
                     System.out.println("Use 'create' to create your first Dictionary!");
@@ -89,10 +90,17 @@ public class TUI {
         long start = 0;
         long stop = 0;
         BufferedReader rd;
-
-        if (args.length < 2) {
+        if (args.length < 3) {
             try {
                 rd = new BufferedReader(new FileReader(args[1]));
+                start = System.nanoTime();
+                String line = rd.readLine();
+                while (line != null) {
+                    String entry[] = line.split(" ");
+                    dic.insert(entry[0], entry[1]);
+                    line = rd.readLine();
+                }
+                stop = System.nanoTime();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -121,14 +129,14 @@ public class TUI {
         long stop = 0;
         try {
             start = System.nanoTime();
-            System.out.printf(dic.search(args[1]));
+            System.out.println(dic.search(args[1]));
             stop = System.nanoTime();
         } catch (NullPointerException e) {
             System.err.println("Wort wurde nicht gefunden!");
         }
 
         long diff = stop - start;
-        System.out.println("Search took " + (diff / 1000000) + "ms");
+        System.out.println("Search took " + (diff / 1000) + "µs");
     }
 
     private static void insert(String[] args) {
