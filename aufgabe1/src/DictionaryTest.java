@@ -1,5 +1,5 @@
 /*
- * Test der verscheidenen Dictionary-Implementierungen
+ * Test der verschiedenen Dictionary-Implementierungen
  *
  * O. Bittel
  * 26.09.2022
@@ -18,7 +18,7 @@ public class DictionaryTest {
 
 		testSortedArrayDictionary();
 		testHashDictionary();
-		//testBinaryTreeDictionary();
+		testBinaryTreeDictionary();
 	}
 
 	private static void testSortedArrayDictionary() {
@@ -107,7 +107,7 @@ public class DictionaryTest {
 		dict.insert("spielen", "play");
 		dict.insert("planen", "plan");
 		dict.insert("diskutieren", "discuss");
-		System.out.println(dict.size());
+		System.out.println(dict.size()); // 17
 		for (Dictionary.Entry<String, String> e : dict) {
 			System.out.println(e.getKey() + ": " + e.getValue() + " search: " + dict.search(e.getKey()));
 		}
