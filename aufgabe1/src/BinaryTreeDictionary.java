@@ -46,6 +46,7 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
             oldValue = p.value;
             p.value = value;
         }
+        p = balance(p);  // balanciere den Baum, sodass er ein AVL-Baum bleibt
         return p;  // liefere den Baum zurück
     }
 
@@ -103,6 +104,7 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
             p.value = min.value;
             size--;
         }
+        p = balance(p);  // balanciere den Baum, sodass er ein AVL-Baum bleibt
         return p;  // liefere den Baum zurück
     }
 
@@ -118,6 +120,7 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
                 p.left.parent = p;
             }
         }
+        p = balance(p);  // balanciere den Baum, sodass er ein AVL-Baum bleibt
         return p;  // liefere den Baum zurück
     }
 
@@ -126,12 +129,42 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
         return size;
     }
 
-    public int height(Node<K, V> p) {
+    public int getHeight(Node<K, V> p) {
         if (p == null) {  // leerer Teilbaum hat Höhe -1
             return -1;
         } else {
             return p.height;
         }
+    }
+
+    public int getBalance(Node<K, V> p) {
+        if (p == null) {  // Knoten mit jeweils leeren Teilbäumen hat Höhenunterschied 0
+            return 0;
+        } else {  //
+            return getHeight(p.right) - getHeight(p.left);  // Höhe rechts minus Höhe links
+        }
+    }
+
+    private Node<K, V> balance(Node<K, V> p) {
+        if (p == null) {  // leerer Teilbaum, tue nichts
+            return null;
+        }
+        p.height = Math.max(getHeight(p.left), getHeight(p.right)) + 1;  // Höhe aktualisieren
+        if (getBalance(p) == -2) {
+            if (getBalance(p.left) <= 0) {
+                p = rotateRight(p);  // Fall A1
+            } else {
+                p = rotateLeftRight(p);  // Fall A2
+            }
+        }
+        else if (getBalance(p) == +2) {
+            if (getBalance(p.right) >= 0) {
+                p = rotateLeft(p);  // Fall B1
+            } else {
+                p = rotateRightLeft(p);  // Fall B2
+            }
+        }
+        return p;
     }
 
     @Override
