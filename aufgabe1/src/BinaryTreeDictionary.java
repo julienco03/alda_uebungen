@@ -126,9 +126,53 @@ public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements
         return size;
     }
 
+    public int height(Node<K, V> p) {
+        if (p == null) {  // leerer Teilbaum hat Höhe -1
+            return -1;
+        } else {
+            return p.height;
+        }
+    }
+
     @Override
     public Iterator<Entry<K, V>> iterator() {
-        return null;
+        return new Iterator<Entry<K, V>>() {
+
+            private Node<K, V> current = null;
+
+            @Override
+            public boolean hasNext() {
+                if (current == null) {  // Knoten hat keine Kinder
+                    current = leftMostDescendant(root);
+                } else if (current.right != null) {  // Knoten hat rechtes Kind
+                    current = leftMostDescendant(current.right);
+                } else {
+                    current = parentOfLeftMostAncestor(current);
+                }
+                return current == null ? false : true;
+            }
+
+            @Override
+            public Entry<K, V> next() {
+                Entry<K, V> element = new Entry<K, V>(current.key, current.value);
+                return element;
+            }
+        };
+    }
+
+    private Node<K,V> leftMostDescendant(Node<K,V> p) {
+        assert p != null;
+        while (p.left != null) {
+            p = p.left;
+        }
+        return p;
+    }
+    private Node<K,V> parentOfLeftMostAncestor(Node<K,V> p) {
+        assert p != null;
+        while (p.parent != null && p.parent.right == p) {
+            p = p.parent;
+        }
+        return p.parent; // kann auch null sein
     }
 
     private static class Node<K, V> {
