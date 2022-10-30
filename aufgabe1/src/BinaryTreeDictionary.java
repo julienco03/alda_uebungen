@@ -16,26 +16,114 @@ import java.util.NoSuchElementException;
  * @param <K> Key.
  * @param <V> Value.
  */
-public class BinaryTreeDictionary<K, V> implements Dictionary<K, V> {
+public class BinaryTreeDictionary<K extends Comparable<? super K>, V> implements Dictionary<K, V> {
 
     @Override
     public V insert(K key, V value) {
-        return null;
+        root = insertR(key, value, root);
+        if (root != null) {
+            root.parent = null;
+        }
+        return oldValue;  // liefere den alten Wert zurück
+    }
+
+    private Node<K, V> insertR(K key, V value, Node<K, V> p) {
+        if (p == null) {  // Knoten kommt nicht vor, füge neuen Knoten ein
+            p = new Node<>(key, value);
+            oldValue = null;
+            size++;
+        } else if (key.compareTo(p.key) < 0) {  // key ist kleiner als Knoten, suche links weiter
+            p.left = insertR(key, value, p.left);
+            if (p.left != null) {
+                p.left.parent = p;
+            }
+        } else if (key.compareTo(p.key) > 0) {  // key ist größer als Knoten, suche rechts weiter
+            p.right = insertR(key, value, p.right);
+            if (p.right != null) {
+                p.right.parent = p;
+            }
+        } else {  // speichere alten Wert und aktualisiere den Knoten mit neuem Wert
+            oldValue = p.value;
+            p.value = value;
+        }
+        return p;  // liefere den Baum zurück
     }
 
     @Override
     public V search(K key) {
-        return null;
+        return searchR(key, root);
+    }
+
+    private V searchR(K key, Node<K, V> p) {
+        if (p == null) {  // Knoten kommt nicht vor
+            return null;
+        } else if (key.compareTo(p.key) < 0) {  // key ist kleiner als Knoten, suche links weiter
+            return searchR(key, p.left);
+        } else if (key.compareTo(p.key) > 0) {  // key ist größer als Knoten, suche rechts weiter
+            return searchR(key, p.right);
+        } else {  // key gefunden, liefere den Wert zurück
+            return p.value;
+        }
     }
 
     @Override
     public V remove(K key) {
-        return null;
+        root = removeR(key, root);
+        if (root != null) {
+            root.parent = null;
+        }
+        return oldValue;  // liefere alten Wert zurück, standardmäßig null
+    }
+
+    private Node<K, V> removeR(K key, Node<K, V> p) {
+        if (p == null) {  // Knoten kommt nicht vor, tue nichts
+            oldValue = null;
+        } else if (key.compareTo(p.key) < 0) {  // key ist kleiner als Knoten, suche links weiter
+            p.left = removeR(key, p.left);
+            if (p.left != null) {
+                p.left.parent = p;
+            }
+        } else if (key.compareTo(p.key) > 0) {  // key ist größer als Knoten, suche rechts weiter
+            p.right = removeR(key, p.right);
+            if (p.right != null) {
+                p.right.parent = p;
+            }
+        } else if (p.left == null || p.right == null) {  // Knoten hat genau ein Kind und wird ausgehängt
+            oldValue = p.value;
+            p = (p.left != null) ? p.left : p.right;
+            size--;
+        } else {  // Knoten hat zwei Kinder, ersetze p durch kleinsten Knoten im rechten Teilbaum
+            MinEntry<K, V> min = new MinEntry<>();
+            p.right = getRemMinR(p.right, min);
+            if (p.right != null) {
+                p.right.parent = p;
+            }
+            oldValue = p.value;
+            p.key = min.key;
+            p.value = min.value;
+            size--;
+        }
+        return p;  // liefere den Baum zurück
+    }
+
+    private Node<K, V> getRemMinR(Node<K, V> p, MinEntry<K, V> min) {
+        assert p != null;  // stelle sicher, dass der Baum nicht leer ist
+        if (p.left == null) {  // kleinsten Wert gefunden, initialisiere 'min' mit 'p'
+            min.key = p.key;
+            min.value = p.value;
+            p = p.right;
+        } else {  // linker Teilbaum ist leer, suche rechts weiter
+            p.left = getRemMinR(p.left, min);
+            if (p.left != null) {
+                p.left.parent = p;
+            }
+        }
+        return p;  // liefere den Baum zurück
     }
 
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
     @Override
@@ -43,7 +131,7 @@ public class BinaryTreeDictionary<K, V> implements Dictionary<K, V> {
         return null;
     }
 
-    static private class Node<K, V> {
+    private static class Node<K, V> {
         K key;
         V value;
         int height;
@@ -61,10 +149,14 @@ public class BinaryTreeDictionary<K, V> implements Dictionary<K, V> {
         }
     }
 
+    private static class MinEntry<K, V> {
+        private K key;
+        private V value;
+    }
+
     private Node<K, V> root = null;
     private int size = 0;
-
-    // ...
+    private V oldValue;  // Ausgabeparameter
 
 	/**
 	 * Pretty prints the tree
@@ -78,7 +170,7 @@ public class BinaryTreeDictionary<K, V> implements Dictionary<K, V> {
         if (p == null) {
             System.out.println("#");
         } else {
-            System.out.println(p.key + " " + p.value + "^" + ((p.parent == null) ? "null" : p.parent.key));
+            System.out.println(p.key + " " + p.value + "^" + ((p.parent == null) ? "null" : ""+p.parent.key));
             if (p.left != null || p.right != null) {
                 printR(level + 1, p.left);
                 printR(level + 1, p.right);
