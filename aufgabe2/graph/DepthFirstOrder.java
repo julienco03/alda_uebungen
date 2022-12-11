@@ -28,7 +28,24 @@ public class DepthFirstOrder<V> {
      */
     public DepthFirstOrder(DirectedGraph<V> g) {
         myGraph = g;
-        // ...
+        for (V v : myGraph.getVertexSet()) {
+            if (!preOrder.contains(v)) {
+                visitDF(v);
+                postOrder.add(v);
+                numberOfDFTrees++;
+            }
+        }
+    }
+
+    public void visitDF(V vertex) {
+        preOrder.add(vertex);
+
+        for (V v : myGraph.getSuccessorVertexSet(vertex)) {
+            if (!preOrder.contains(v)) {
+                visitDF(v);
+                postOrder.add(v);
+            }
+        }
     }
 
     /**
