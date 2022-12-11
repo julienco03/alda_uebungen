@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Set;
-import java.util.HashSet;
 
 /**
  * Implementierung von DirectedGraph mit einer doppelten TreeMap 
