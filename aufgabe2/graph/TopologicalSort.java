@@ -93,6 +93,8 @@ public class TopologicalSort<V> {
 		morningRoutine.addEdge("Mantel", "Schal");
 		morningRoutine.addEdge("Schal", "Handschuhe");
 		morningRoutine.addEdge("Mütze", "Handschuhe");
+		// Wenn eine Hose nur mit einem Schal angezogen werden darf, entsteht ein Zyklus und die Topologische Sortierung schlägt fehl
+		// morningRoutine.addEdge("Schal", "Hose");
 		System.out.println(morningRoutine);
 
 		TopologicalSort<String> ts2 = new TopologicalSort<>(morningRoutine);
