@@ -22,7 +22,6 @@ public class ShortestPath<V> {
 	IndexMinPQ<V, Double> cand; // Kandidaten als PriorityQueue PQ
 	DirectedGraph<V> graph;
 	Heuristic<V> heuristic;
-	LinkedList<V> sp; // Knoten eines kürzesten Weges
 	V start;
 	V ziel;
 	Double inf = Double.MAX_VALUE; // "unendlich"
@@ -44,7 +43,6 @@ public class ShortestPath<V> {
 		cand = new IndexMinPQ<>();
 		graph = g;
 		heuristic = h;
-		sp = new LinkedList<>();
 	}
 
 	/**
@@ -95,7 +93,9 @@ public class ShortestPath<V> {
 	 */
 	private boolean shortestPath(V s, V z, DirectedGraph<V> g, Map<V, Double> dist,
 			Map<V, V> pred, IndexMinPQ<V, Double> cand) {
-		// sp.clear();
+		dist.clear();
+		cand.clear();
+		pred.clear();
 		start = s;
 		ziel = z;
 
@@ -111,7 +111,6 @@ public class ShortestPath<V> {
 		} else { /* === A*-Verfahren === */
 			cand.add(s, heuristic.estimatedCost(s, z));
 		}
-
 		while (!cand.isEmpty()) {
 			V v = cand.removeMin(); // Knoten mit kleinstem Distanzwert
 			System.out.println("Besuchter Knoten " + v + " mit d: " + dist.get(v));
@@ -132,17 +131,16 @@ public class ShortestPath<V> {
 				} else { /* === A*-Verfahren === */
 					if (dist.get(w) == inf) {
 						pred.put(w, v); // p[w] = v;
-						dist.put(w, dist.get(v) + heuristic.estimatedCost(v, w)); // d[w] = d[v] + c(v,w);
+						dist.put(w, dist.get(v) + g.getWeight(v, w)); // d[w] = d[v] + c(v,w);
 						cand.add(w, dist.get(w) + heuristic.estimatedCost(w, z)); // kl.insert(w, d[w] + h(w,z));
-					} else if (dist.get(v) + heuristic.estimatedCost(v, w) < dist.get(w)) {
+					} else if (dist.get(v) + g.getWeight(v, w) < dist.get(w)) {
 						pred.put(w, v); // p[w] = v;
-						dist.put(w, dist.get(v) + heuristic.estimatedCost(v, w)); // d[w] = d[v] + c(v,w);
+						dist.put(w, dist.get(v) + g.getWeight(v, w)); // d[w] = d[v] + c(v,w);
 						cand.change(w, dist.get(w) + heuristic.estimatedCost(w, z)); // kl.change(w, d[w] + h(w,z));
 					}
 				}
 			}
 		}
-
 		return false;
 	}
 
