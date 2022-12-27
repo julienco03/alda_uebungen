@@ -3,8 +3,6 @@
  * and open the template in the editor.
  */
 
-package shortestPath;
-
 /**
  * @author Oliver Bittel
  * @since 26.09.2022
@@ -13,6 +11,7 @@ package shortestPath;
 public interface Heuristic<V> {
 	/**
 	 * Schätzt die Kosten (Distanz) von u nach v ab.
+	 * 
 	 * @param u
 	 * @param v
 	 * @return Geschätzte Kosten.
