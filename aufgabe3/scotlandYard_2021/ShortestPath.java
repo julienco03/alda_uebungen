@@ -2,6 +2,8 @@
 // O. Bittel;
 // 26.09.2022
 import sim.SYSimulation;
+
+import java.awt.Color;
 import java.util.*;
 
 // ...
@@ -49,17 +51,9 @@ public class ShortestPath<V> {
 	 * Diese Methode sollte nur verwendet werden,
 	 * wenn kürzeste Wege in Scotland-Yard-Plan gesucht werden.
 	 * Es ist dann ein Objekt für die Scotland-Yard-Simulation zu übergeben.
-	 * <p>
 	 * Ein typische Aufruf für ein SYSimulation-Objekt sim sieht wie folgt aus:
-	 * <p>
-	 * <blockquote>
-	 *
-	 * <pre>
 	 * if (sim != null)
-	 * 	sim.visitStation((Integer) v, Color.blue);
-	 * </pre>
-	 *
-	 * </blockquote>
+	 * sim.visitStation((Integer) v, Color.blue);
 	 *
 	 * @param sim SYSimulation-Objekt.
 	 */
@@ -69,7 +63,6 @@ public class ShortestPath<V> {
 
 	/**
 	 * Sucht den kürzesten Weg von Starknoten s zum Zielknoten g.
-	 * <p>
 	 * Falls die Simulation mit setSimulator(sim) aktiviert wurde, wird der Knoten,
 	 * der als nächstes aus der Kandidatenliste besucht wird, animiert.
 	 *
@@ -112,9 +105,10 @@ public class ShortestPath<V> {
 			cand.add(s, heuristic.estimatedCost(s, z));
 		}
 		while (!cand.isEmpty()) {
-			V v = cand.removeMin(); // Knoten mit kleinstem Distanzwert
-			System.out.println("Besuchter Knoten " + v + " mit d: " + dist.get(v));
-			if (v == z) {
+			V v = cand.removeMin(); // Besuche Knoten mit kleinstem Distanzwert
+			printCurrentVertex(v);
+
+			if (v.equals(z)) {
 				return true; // Zielknoten z erreicht
 			}
 			for (V w : g.getPredecessorVertexSet(v)) {
@@ -142,6 +136,13 @@ public class ShortestPath<V> {
 			}
 		}
 		return false;
+	}
+
+	private void printCurrentVertex(V v) {
+		System.out.println("Besuchter Knoten " + v + " mit d: " + dist.get(v));
+		if (sim != null) {
+			sim.visitStation((Integer) v, Color.BLUE);
+		}
 	}
 
 	/**

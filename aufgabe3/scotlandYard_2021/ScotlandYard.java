@@ -39,17 +39,17 @@ public class ScotlandYard {
 
 		while (in.hasNextLine()) {
 			String line = in.nextLine();
-			String[] w = line.split(" ");
-			int u = Integer.parseInt(w[0]);
-			int v = Integer.parseInt(w[1]);
+			String[] args = line.split("\\s");
+
+			int u = Integer.parseInt(args[0]);
+			int v = Integer.parseInt(args[1]);
 			int dist = 0;
-			int oldDist = Integer.MAX_VALUE;
 
 			// Knoten hinzufügen
 			sy_graph.addVertex(u);
 			sy_graph.addVertex(v);
 
-			switch (w[2]) {
+			switch (args[2]) {
 				case "Taxi":
 					dist = 2;
 					break;
@@ -62,14 +62,12 @@ public class ScotlandYard {
 			}
 
 			if (sy_graph.containsEdge(u, v)) {
-				oldDist = (int) sy_graph.getWeight(u, v);
+				continue;
+			} else {
+				sy_graph.addEdge(u, v, dist);
+				sy_graph.addEdge(v, u, dist);
 			}
-			if (oldDist < dist) {
-				dist = oldDist;
-			}
-			// Kanten hinzufügen
-			sy_graph.addEdge(u, v, dist);
-			sy_graph.addEdge(v, u, dist);
+
 		}
 
 		// Test, ob alle Kanten eingelesen wurden:
@@ -80,7 +78,6 @@ public class ScotlandYard {
 			for (Integer w : sy_graph.getSuccessorVertexSet(v))
 				wSum += sy_graph.getWeight(v, w);
 		System.out.println("Sum of all Weights:       " + wSum); // 1972.0
-
 		return sy_graph;
 	}
 
@@ -115,7 +112,6 @@ public class ScotlandYard {
 		Heuristic<Integer> syHeuristic = getHeuristic(); // A*
 
 		ShortestPath<Integer> sySp = new ShortestPath<Integer>(syGraph, syHeuristic);
-
 		sySp.searchShortestPath(65, 157);
 		System.out.println("Distance = " + sySp.getDistance()); // 9.0
 		System.out.println("Expected = 9.0\n\n");
@@ -138,7 +134,7 @@ public class ScotlandYard {
 		sySp.setSimulator(sim);
 		sim.startSequence("Shortest path from 1 to 173");
 
-		// sySp.searchShortestPath(65,157); // 9.0
+		// sySp.searchShortestPath(65, 157); // 9.0
 		// sySp.searchShortestPath(1,175); //25.0
 
 		sySp.searchShortestPath(1, 173); // 22.0
@@ -177,19 +173,19 @@ class ScotlandYardHeuristic implements Heuristic<Integer> {
 		Scanner in = new Scanner(new File("aufgabe3/scotlandYard_2021/ScotlandYard_Knoten.txt"));
 		while (in.hasNextLine()) {
 			String line = in.nextLine();
-			String[] w = line.split("[\\t|\\s]+");
+			String[] w = line.split("\\s");
 			Point p = new Point(Integer.parseInt(w[1]), Integer.parseInt(w[2]));
 			coord.put(Integer.parseInt(w[0]), p);
 		}
 	}
 
 	public double estimatedCost(Integer u, Integer v) {
-		ScotlandYardHeuristic.Point vP = coord.get(u);
-		ScotlandYardHeuristic.Point wP = coord.get(v);
-		int x = (vP.x - wP.x);
-		int y = (vP.y - wP.y);
-		double betrag = Math.sqrt((x * x) + (y * y));
+		Point uP = coord.get(u);
+		Point vP = coord.get(v);
+		int x = (uP.x - vP.x);
+		int y = (uP.y - vP.y);
+		double betrag = Math.sqrt((x * x) + (y * y)) / 30;
 
-		return betrag / 30;
+		return betrag;
 	}
 }
