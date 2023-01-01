@@ -113,27 +113,29 @@ public class TelNet {
     }
 
     /**
-     * Zeichnet das gefundene optimale Telefonnetz mit der Größe xMax*yMax in ein
+     * Zeichnet das gefundene optimale Telefonnetz mit der Größe xlbg*ylbg in ein
      * Fenster.
      *
-     * @param xMax Maximale x-Größe.
-     * @param yMax Maximale y-Größe.
+     * @param xlbg lbgimale x-Größe.
+     * @param ylbg lbgimale y-Größe.
      */
-    public void drawOptTelNet(int xMax, int yMax) {
+    public void drawOptTelNet(int xlbg, int ylbg) {
         StdDraw.setCanvasSize(512, 512);
-        StdDraw.setXscale(0, xMax + 1);
-        StdDraw.setYscale(0, yMax + 1);
+        StdDraw.setXscale(0, xlbg + 1);
+        StdDraw.setYscale(0, ylbg + 1);
 
-        for (int i = 0; i < yMax; i++) {
-            StdDraw.line(0.5, i + 0.5, yMax + 0.5, i + 0.5);
+        // Raster einzeichnen
+        for (int i = 0; i < ylbg; i++) {
+            StdDraw.line(0.5, i + 0.5, ylbg + 0.5, i + 0.5);
         }
-        for (int i = 0; i < xMax; i++) {
-            StdDraw.line(i + 0.5, 0.5, i + 0.5, xMax + 0.5);
+        for (int i = 0; i < xlbg; i++) {
+            StdDraw.line(i + 0.5, 0.5, i + 0.5, xlbg + 0.5);
         }
-        StdDraw.line(0.5, yMax + 0.5, xMax + 0.5, yMax + 0.5);
-        StdDraw.line(xMax + 0.5, 0.5, xMax + 0.5, yMax + 0.5);
+        StdDraw.line(0.5, ylbg + 0.5, xlbg + 0.5, ylbg + 0.5);
+        StdDraw.line(xlbg + 0.5, 0.5, xlbg + 0.5, ylbg + 0.5);
+
+        // minimal aufspannenden Baum einzeichnen
         StdDraw.setPenColor(StdDraw.RED);
-
         for (var v : minTree) {
             double x = v.u.x;
             double y = v.v.y;
@@ -150,14 +152,14 @@ public class TelNet {
     /**
      *
      * @param n    Anzahl Telefonknoten
-     * @param xMax xMax - Intervallgrenz für x-Koordinate.
-     * @param yMax yMax - Intervallgrenz für y-Koordinate.
+     * @param xlbg xlbg - Intervallgrenz für x-Koordinate.
+     * @param ylbg ylbg - Intervallgrenz für y-Koordinate.
      */
-    public void generateRandomTelNet(int n, int xMax, int yMax) {
+    public void generateRandomTelNet(int n, int xlbg, int ylbg) {
         int i = 0;
         while (i < n) {
-            int px = (int) (Math.random() * xMax);
-            int py = (int) (Math.random() * yMax);
+            int px = (int) (Math.random() * xlbg);
+            int py = (int) (Math.random() * ylbg);
             if (this.addTelKnoten(px, py)) {
                 i++;
             }
@@ -173,14 +175,34 @@ public class TelNet {
         return size;
     }
 
+    /* === TESTS === */
+    private static void test1() {
+        TelNet telnet = new TelNet(5);
+        telnet.addTelKnoten(1, 1);
+        telnet.addTelKnoten(3, 1);
+        telnet.addTelKnoten(4, 2);
+        telnet.addTelKnoten(3, 4);
+        telnet.addTelKnoten(7, 6);
+        telnet.addTelKnoten(2, 6);
+        telnet.addTelKnoten(4, 7);
+        System.out.println(
+                "Gibt es einen minimal aufspannenden Baum? " + (telnet.computeOptTelNet() ? "Ja!" : "Nein!"));
+        System.out.println("Gesamtkosten: " + telnet.getOptTelNetKosten());
+        telnet.drawOptTelNet(7, 7);
+    }
+
+    private static void test2() {
+        int lbg = 1000;
+        TelNet telnet2 = new TelNet(100);
+
+        telnet2.generateRandomTelNet(lbg, lbg, lbg);
+        System.out.println(
+                "Gibt es einen minimal aufspannenden Baum? " + (telnet2.computeOptTelNet() ? "Ja!" : "Nein!"));
+        telnet2.drawOptTelNet(lbg, lbg);
+    }
+
     public static void main(String[] args) {
-        int max = 1000;
-        TelNet tn2 = new TelNet(100);
-
-        tn2.generateRandomTelNet(max, max, max);
-
-        System.out.println(tn2.computeOptTelNet());
-
-        tn2.drawOptTelNet(max, max);
+        test1();
+        // test2();
     }
 }
