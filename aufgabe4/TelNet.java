@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.awt.*;
 
 /**
  * @author Julian Klimek, Dominik Bartsch
@@ -13,7 +14,7 @@ import java.util.PriorityQueue;
 
 /**
  * Klasse zur Verwaltung von Telefonknoten mit (x,y)-Koordinaten und zur
- * Berechnung eines minimal aufspannenden Baums mit dem Algorithmus von Kruskal.
+ * Berechnung eines minimal aufspannvn Baums mit dem Algorithmus von Kruskal.
  * Kantengewichte sind durch den Manhattan-Abstand definiert.
  */
 public class TelNet {
@@ -51,7 +52,7 @@ public class TelNet {
     }
 
     /**
-     * Berechnet ein optimales Telefonnetz als minimal aufspannenden Baum mit dem
+     * Berechnet ein optimales Telefonnetz als minimal aufspannvn Baum mit dem
      * Algorithmus von Kruskal.
      *
      * @return true, falls es einen minimal aufspannden Baum gibt, sonst false
@@ -75,8 +76,8 @@ public class TelNet {
 
         while (forest.size() != 1 && !edges.isEmpty()) {
             TelVerbindung tel = edges.poll();
-            int t1 = forest.find(telMap.get(tel.anfang));
-            int t2 = forest.find(telMap.get(tel.ende));
+            int t1 = forest.find(telMap.get(tel.u));
+            int t2 = forest.find(telMap.get(tel.v));
             if (t1 != t2) {
                 forest.union(t1, t2);
                 minTree.add(tel);
@@ -134,13 +135,13 @@ public class TelNet {
         StdDraw.setPenColor(StdDraw.RED);
 
         for (var v : minTree) {
-            double x = v.anfang.x;
-            double y = v.ende.y;
-            StdDraw.line(v.anfang.x, v.anfang.y, x, y);
-            StdDraw.line(x, y, v.ende.x, v.ende.y);
+            double x = v.u.x;
+            double y = v.v.y;
+            StdDraw.line(v.u.x, v.u.y, x, y);
+            StdDraw.line(x, y, v.v.x, v.v.y);
             StdDraw.setPenColor(Color.BLUE);
-            StdDraw.filledSquare(v.anfang.x, v.anfang.y, 0.5);
-            StdDraw.filledSquare(v.ende.x, v.ende.y, 0.5);
+            StdDraw.filledSquare(v.u.x, v.u.y, 0.5);
+            StdDraw.filledSquare(v.v.x, v.v.y, 0.5);
             StdDraw.setPenColor(Color.RED);
         }
         StdDraw.show(0);
