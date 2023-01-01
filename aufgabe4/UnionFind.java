@@ -1,6 +1,7 @@
 /**
  * @author Julian Klimek, Dominik Bartsch
- * @date 01.01.2023
+ * @since 01.01.2023
+ * @version 0.1
  */
 
 /**
